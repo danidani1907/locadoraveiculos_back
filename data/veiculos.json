@@ -1,0 +1,21 @@
+[
+{
+    "tipo": "Carro",
+    "modelo": "Ferrari",
+    "placa": "AAA777",
+    "disponivel": "false"
+},
+
+{
+    "tipo": "Moto",
+    "modelo": "bis",
+    "placa": "CCK9K9",
+    "disponivel": "true"
+},
+{
+    "tipo": "Carro",
+    "modelo": "ford",
+    "placa": "GVGH389",
+    "disponivel": "false"
+}
+]
