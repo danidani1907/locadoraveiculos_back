@@ -14,7 +14,7 @@
     }
 
     //Função para calculo de alguel
-    abstract public function calculoAluguel(int $dias) : float;
+    abstract public function calcularAluguel(int $dias) : float;
 
     public function isDisponivel():bool{
             return $this->disponivel;
