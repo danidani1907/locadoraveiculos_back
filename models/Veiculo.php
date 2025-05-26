@@ -1,11 +1,12 @@
 <?php
-    namespace Models;
-    //Classe abstrata para todos os tipos de veiculos
-    abstract class Veiculo{
-        protected string $modelo;
-        protected string $placa;
-        protected bool $disponivel;
-    
+ namespace Models;
+
+ // Classe abstrata para todos os tipos de veículos
+
+ abstract class Veiculo {
+    protected string $modelo;
+    protected string $placa;
+    protected bool $disponivel;
 
     public function __construct (string $modelo, string $placa){
         $this -> modelo = $modelo;
@@ -13,24 +14,19 @@
         $this -> disponivel = true;
     }
 
-    //Função para calculo de alguel
+    // Função para cálculo de aluguel
     abstract public function calcularAluguel(int $dias) : float;
 
-    public function isDisponivel():bool{
-            return $this->disponivel;
-}
-    public function getModelo():string{
+    public function isDisponivel():bool {
+        return $this->disponivel;
+    }
+    public function getModelo(): string{
         return $this->modelo;
-}
-
-    public function getPlaca():string{
-    return $this->placa;
-}
-
+    }
+    public function getPlaca(): string{
+        return $this->placa;
+    }
     public function setDisponivel(bool $disponivel):void{
         $this->disponivel = $disponivel;
-}
-
-
-}
-?>
+    }
+ }

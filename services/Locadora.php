@@ -1,10 +1,9 @@
 <?php
 namespace Services;
-// locadora
 
 use Models\{Veiculo, Carro, Moto};
 
-// classe para gerenciar a locação 
+// classe para gerenciar a locação
 class Locadora {
     private array $veiculos = [];
 
@@ -12,16 +11,15 @@ class Locadora {
         $this->carregarVeiculos();
     }
 
-    private function carregarVeiculos(): void{
-        // verfica se o arquivo json existe , pega o arquivo converte jogar no vetor 
+    private function carregarVeiculos(): void {
         if (file_exists(ARQUIVO_JSON)){
-            // decodifica o arquivo json
-            // armazena na variavel $dado
+
+            // decodifica o arquivo JSON
             $dados = json_decode(file_get_contents(ARQUIVO_JSON),true);
 
-            // foreach= para cada 
             foreach ($dados as $dado){
-                if($dado['tipo']=== 'Carro'){
+
+                if ($dado['tipo']=== 'Carro'){
                     $veiculo = new Carro($dado['modelo'], $dado['placa']);
                 } else {
                     $veiculo = new Moto($dado['modelo'], $dado['placa']);
@@ -32,109 +30,110 @@ class Locadora {
             }
         }
     }
-    // funçao salvar veiculos
+
+    // Salvar veículos
     private function salvarVeiculos(): void{
         $dados = [];
 
         foreach($this->veiculos as $veiculo){
             $dados[] = [
-                'tipo' => ($veiculo instanceof Carro) ? 'Carro' : 'Moto',
+                'tipo' => ($veiculo instanceof Carro) ? 'Carro' :'Moto',
                 'modelo' => $veiculo -> getModelo(),
                 'placa' => $veiculo -> getPlaca(),
                 'disponivel' => $veiculo -> isDisponivel()
             ];
         }
-            $dir =dirname(ARQUIVO_JSON);
 
-            if(!is_dir($dir)){
-                mkdir($dir, 0777, true);
-            }
+        $dir = dirname(ARQUIVO_JSON);
 
-            file_put_contents(ARQUIVO_JSON, json_encode($dados,JSON_PRETTY_PRINT));
+        if (!is_dir($dir)){
+            mkdir($dir, 0777, true);
         }
 
-    // adiciona novo veiculo
+        file_put_contents(ARQUIVO_JSON, json_encode($dados, JSON_PRETTY_PRINT));
+        
+    }
+
+    // Adicionar novo veículo
     public function adicionarVeiculo(Veiculo $veiculo): void{
         $this->veiculos[] = $veiculo;
         $this->salvarVeiculos();
     }
 
-    // funçao Remover veiculo
-    public function revomerVeiculo(string $modelo, $placa): string{
-        
-        foreach($this->veiculos as $key => $veiculo){
-            // ver se o medelo e placa pertence ao mesmo veiculo
-            // verifica se modelo e placa correspodem
-            if($veiculo->getModelo() === $modelo && $veiculo->getPlaca() === $placa ){
-                // remover veiculo do array / sempre que usa o this ta chamando um vetor
+    //Remover veículo
+    public function deletarVeiculo(string $modelo, string $placa): string{
+
+        foreach ($this->veiculos as $key => $veiculo){
+
+            // verifica se modelo e placa correspondem
+            if($veiculo->getModelo() === $modelo && $veiculo->getPlaca() === $placa){
+                // remove o veículo do array
                 unset($this->veiculos[$key]);
 
                 // reorganizar os indices
                 $this->veiculos = array_values($this->veiculos);
 
-                // salvar novo estado
+                // Salvar o novo estado
                 $this->salvarVeiculos();
-                return "Veiculo '{} removido com sucesso!";
+                return "Veículo '{$modelo}' removido com sucesso!";
             }
         }
-        // se caso nao for encontrado
-        return "Veiculo não encontrado!";
+        return "Veículo não encontrado!";
     }
 
-    // funçao alugar veiculo por x dias
-    // esse = 1 ta forçando voce alugar pelo menos um 1 dia
+    // Alugar veículo por n dias
     public function alugarVeiculo(string $modelo, int $dias = 1): string{
 
-        // percorre a lista de veiculos
+        // percorre a lista de veículos
         foreach($this->veiculos as $veiculo){
-            // verfica se esta disponivel
+
             if($veiculo->getModelo() === $modelo && $veiculo->isDisponivel()){
 
                 // calcular valor do aluguel
                 $valorAluguel = $veiculo->calcularAluguel($dias);
 
-                // Marcar como alugado/indisponivel
+                // Marcar como alugado
                 $mensagem = $veiculo->alugar();
 
-                // salvar novo estado do veiculo
                 $this->salvarVeiculos();
 
-                return $mensagem . "Valor do aluguel: R$" . number_format
-                ($valorAluguel, 2, ',', '.');
-                    // esse number format e pra formatar o valor
-                
+                return $mensagem . "Valor do aluguel: R$" . number_format($valorAluguel, 2, ',', '.');
             }
         }
-        return "veiculo não disponivel";
+        return "Veículo não disponível";
     }
 
-    // funçao devolver veiculo
-        public function devolverVeiculo(string $modelo) :string{
+    // Devolver veículo
 
-        // percorrer a lista
+    public function devolverVeiculo(string $modelo) :string{
+
+        // Percorrer a lista
         foreach($this->veiculos as $veiculo){
-           
+
             if($veiculo->getModelo() === $modelo && !$veiculo->isDisponivel()){
+
+                // disponibilizar o veículo
                 $mensagem = $veiculo->devolver();
 
                 $this->salvarVeiculos();
                 return $mensagem;
             }
         }
-        return "Veiculo já disponivel ou nâo encontrado.";
+        return "Veículo já disponível ou não encontrado.";
     }
 
-    // funçao retornar a lista de veiculos
+    // Retorna a lista de veículos
+
     public function listarVeiculos():array{
         return $this->veiculos;
     }
 
-    // funçao calcular previsao do valor
+    // Calcular previsão do valor
     public function calcularPrevisaoAluguel(string $tipo, int $dias): float {
-        
-        if($tipo === 'Carro'){
-            return(new Carro('',''))->calcularAluguel($dias);
-        }
-        return(new Moto('',''))->calcularAluguel($dias);
+
+       if($tipo ==='Carro'){
+            return (new Carro('','')) ->calcularAluguel($dias);
+       }
+       return (new Moto('','')) ->calcularAluguel($dias);
     }
 }

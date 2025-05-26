@@ -1,29 +1,28 @@
 <?php
-
 namespace Models;
-use interfaces\Locavel;
+use Interfaces\Locavel;
 
-//classe que representa uma moto
-
+//classe que representa as motos
 class Moto extends Veiculo implements Locavel {
-    public function calculoAluguel(int $dias): float{
-            return $dias * DIARIA_MOTO;
+
+    public function calcularAluguel(int $dias):float{
+        return $dias * DIARIA_MOTO;
+    }
+
+    public function alugar():string{
+        if($this->disponivel){
+            $this ->disponivel = false;
+            return "Moto '{$this->modelo}' alugada com sucesso!";
+        }
+        return "Moto '{$this->modelo}' não está disponível.";
     }
     
-    public function alugar(): string{
-        if ($this->disponivel){
-            $this->disponivel = false;
-            return "Moto'{$this->modelo}' alugado com sucesso!";
+    public function devolver() : string{
+        if(!$this->disponivel){
+            $this ->disponivel = true;
+            return "Moto '{$this->modelo}' devolvida com sucesso!";
         }
-        return "Moto '{$this->modelo}' não esta disponivel";
+        return "Moto '{$this->modelo}' já está disponível.";
     }
 
-        public function devolver(): string{
-            if ($this->disponivel){
-                $this->disponivel = true ;
-                return "Moto'{$this->modelo}' devolvido com sucesso!";
-            }
-            return "Moto'{$this->modelo}' já esta disponivel";
-        }   
 }
-?>
